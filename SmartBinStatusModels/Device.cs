@@ -28,6 +28,7 @@ namespace SmartBinStatusModels
         public string NearestIntersectionFirst { get; set; }
         public string NearestIntersectionSecond { get; set; }
         public bool IsDeleted { get; set; }
+        public Nullable<bool> Reviewed { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DeviceStatus> DeviceStatuses { get; set; }

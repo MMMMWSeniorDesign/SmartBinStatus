@@ -1,15 +1,15 @@
 ﻿using SmartBinStatusModels;
 using System;
 using System.Linq;
-using System.Windows.Input;
 
 namespace SmartBinStatus.ViewModels
 {
     public class DeviceViewModel : ViewModelBase
     {
         #region Private Fields
-        private bool      _isDeleted;
+        private bool      _isDeleted, _reviewed;
         private decimal?  _latitude, _longitude;
+        private Device    _device;
         private DateTime  _receivedDate;
         private DateTime? _deploymentDate;
         private string    _nearestIntersectionFirst, _nearestIntersectionSecond, _serial, _status;
@@ -20,11 +20,11 @@ namespace SmartBinStatus.ViewModels
         public DeviceViewModel()
         {
             Serial = new Serial().ToString();
-            
         }
 
         public DeviceViewModel(Device device)
         {
+            _device                   = device;
             DeploymentDate            = device.DeploymentDate;
             IsDeleted                 = device.IsDeleted;
             Latitude                  = device.Latitude;
@@ -32,24 +32,29 @@ namespace SmartBinStatus.ViewModels
             NearestIntersectionFirst  = device.NearestIntersectionFirst;
             NearestIntersectionSecond = device.NearestIntersectionSecond;
             ReceivedDate              = device.ReceivedDate;
+            Reviewed                  = device.Reviewed.Value;
             Serial                    = device.Serial;
             Status                    = GetDeviceStatus(device);
         }
 
         private string GetDeviceStatus(Device device)
         {
-            DeviceStatus status;
+            DeviceStatus status = device.DeviceStatuses.ToList()
+                                        .OrderByDescending(s => s.Timestamp).Take(1).SingleOrDefault();
 
-            if ((status = device.DeviceStatuses.ToList()
-                                .OrderByDescending(s => s.Timestamp).Take(1).SingleOrDefault()) == null)
+            if (device.IsDeleted)
+                return "Device removed from system.";
+
+            if (device.DeploymentDate == null)
+                return "Device not yet deployed.";
+
+            if (status == null)
                 return "Device status unavailable.";
 
             if (status.Status == (int)DeviceStatusCodes.Full)
                 return "Bin is full";
-            else if (status.Status == (int)DeviceStatusCodes.NotFull)
-                return "No attention required";
             else
-                return "Device status unreported";
+                return "No attention required";
         }
 
         #region Public Properties
@@ -62,6 +67,19 @@ namespace SmartBinStatus.ViewModels
                 {
                     _isDeleted = value;
                     OnPropertyChanged("IsDeleted");
+                }
+            }
+        }
+
+        public bool Reviewed
+        {
+            get { return _reviewed; }
+            set
+            {
+                if (_reviewed != value)
+                {
+                    _reviewed = value;
+                    OnPropertyChanged("Reviewed");
                 }
             }
         }
@@ -116,6 +134,11 @@ namespace SmartBinStatus.ViewModels
                     OnPropertyChanged("Longitude");
                 }
             }
+        }
+
+        public Device Device
+        {
+            get { return _device; }
         }
 
         public string NearestIntersection

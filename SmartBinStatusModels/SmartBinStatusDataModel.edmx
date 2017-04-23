@@ -17,6 +17,7 @@
           <Property Name="NearestIntersectionFirst" Type="varchar" MaxLength="50" />
           <Property Name="NearestIntersectionSecond" Type="varchar" MaxLength="50" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="Reviewed" Type="bit" />
         </EntityType>
         <EntityType Name="DeviceStatuses">
           <Key>
@@ -64,6 +65,7 @@
           <Property Name="NearestIntersectionFirst" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="NearestIntersectionSecond" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="Reviewed" Type="Boolean" />
           <NavigationProperty Name="DeviceStatuses" Relationship="Self.FK_DeviceStatuses_Devices" FromRole="Devices" ToRole="DeviceStatuses" />
         </EntityType>
         <EntityType Name="DeviceStatus">
@@ -113,6 +115,7 @@
                 <ScalarProperty Name="NearestIntersectionFirst" ColumnName="NearestIntersectionFirst" />
                 <ScalarProperty Name="NearestIntersectionSecond" ColumnName="NearestIntersectionSecond" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Reviewed" ColumnName="Reviewed" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -8,7 +8,11 @@ namespace SmartBinStatus.ViewModels
         private readonly Predicate<object> _canExecute;
         private readonly Action<object> _execute;
  
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
  
         public DelegateCommand(Action<object> execute) : this(execute, null) {  }
  
@@ -31,14 +35,6 @@ namespace SmartBinStatus.ViewModels
         public void Execute(object parameter)
         {
             _execute(parameter);
-        }
- 
-        public void RaiseCanExecuteChanged()
-        {
-            if( CanExecuteChanged != null )
-            {
-                CanExecuteChanged(this, EventArgs.Empty);
-            }
         }
     }
 }

@@ -10,67 +10,84 @@
     <Window.Resources>
         <vm:DevicesViewModel x:Key="DevicesViewModel"/>
         <vm:DeviceViewModel x:Key="DeviceViewModel"/>
+        <BooleanToVisibilityConverter x:Key="boolToVis" />
     </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid Margin="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            
-            <DockPanel Margin="0, 0, 0, 10">
-                <Label Content="Device Id: " Margin="0, 0, 10, 0" />
-                <TextBox Grid.Column="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Text="{Binding SerialFilter, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}" />
-            </DockPanel>
+        <Grid Visibility="{Binding NotShowingLocations, Converter={StaticResource boolToVis}, Source={StaticResource DevicesViewModel}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <DockPanel Grid.Row="1" Margin="0, 0, 0, 10">
-                <Label Content="Status: " Margin="0, 0, 10, 0" />
-                <ComboBox ItemsSource="{Binding DeviceStatuses, Source={StaticResource DevicesViewModel}}" SelectedItem="{Binding StatusFilter, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}"/>
-            </DockPanel>
+                <DockPanel Margin="0, 0, 0, 10">
+                    <Label Content="Device Id: " Margin="0, 0, 10, 0" />
+                    <TextBox Grid.Column="1" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Text="{Binding SerialFilter, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
 
-            <DockPanel Grid.Row="2">
-                <Label Content="Results" DockPanel.Dock="Top" Padding="0" />
-                <ListBox DockPanel.Dock="Bottom" HorizontalContentAlignment="Right" Margin="0, 0, 0, 10" ItemsSource="{Binding Devices, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedDevice, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Serial}" Margin="3"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DockPanel>
+                <DockPanel Grid.Row="1" Margin="0, 0, 0, 10">
+                    <Label Content="Status: " Margin="0, 0, 10, 0" />
+                    <ComboBox ItemsSource="{Binding DeviceStatuses, Source={StaticResource DevicesViewModel}}" SelectedItem="{Binding StatusFilter, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
 
-            <StackPanel Grid.Row="3">
-                <Button Content="Add Device"    Grid.Row="3" Margin="0, 0, 0, 10" Command="{Binding AddDeviceCommand, Source={StaticResource DevicesViewModel}}" />
-                <Button Content="Remove Device" Grid.Row="4" />
-            </StackPanel>
+                <DockPanel Grid.Row="2">
+                    <Label Content="Results" DockPanel.Dock="Top" Padding="0" />
+                    <ListBox DockPanel.Dock="Bottom" HorizontalContentAlignment="Right" Margin="0, 0, 0, 10" ItemsSource="{Binding Devices, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedDevice, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Serial}" Margin="3"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+
+                <StackPanel Grid.Row="3">
+                    <CheckBox Content="Show Deleted Devices"    Margin="0, 0, 0, 10" IsChecked="{Binding ShowDeletedDevices, Source={StaticResource DevicesViewModel}}" />
+                    <Button   Content="Add Device"              Margin="0, 0, 0, 10" Command="{Binding AddDeviceCommand, Source={StaticResource DevicesViewModel}}" />
+                    <Button   Content="Remove Device"           Margin="0, 0, 0, 10" Command="{Binding RemoveDeviceCommand, Source={StaticResource DevicesViewModel}}" />
+                    <Button   Content="Get Full Bin Locations"                       Command="{Binding ShowLocationsCommand, Source={StaticResource DevicesViewModel}}" />
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1" Margin="0, 10, 10, 10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Margin="0, 0, 0, 10">
+                    <Label FontSize="14" Visibility="{Binding Alerting, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}}">
+                        <TextBlock TextWrapping="Wrap" Text="Bins are full.  You may use the 'Get Full Bin Locations' button to retrieve a list of GPS coordinates." />
+                    </Label>
+                    <Label Content="Device Id" />
+                    <TextBox Text="{Binding SelectedDevice.Serial, Source={StaticResource DevicesViewModel}}" />
+                    <Label Content="GPS Location" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Content="Latitude" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Text="{Binding SelectedDevice.Latitude, Source={StaticResource DevicesViewModel}}" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Content="Longitude" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Text="{Binding SelectedDevice.Longitude, Source={StaticResource DevicesViewModel}}" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Content="Received Date" />
+                    <TextBox Text="{Binding SelectedDevice.ReceivedDate, Source={StaticResource DevicesViewModel}}" />
+                    <Label Content="Deployment Date" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Text="{Binding SelectedDevice.DeploymentDate, Source={StaticResource DevicesViewModel}}" Visibility="{Binding ShowDeploymentDate, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label Content="Nearest Intersection" Visibility="{Binding ShowIntersection, Source={StaticResource DevicesViewModel}, Converter={StaticResource boolToVis}, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Text="{Binding SelectedDevice.NearestIntersection, Source={StaticResource DevicesViewModel}, Mode=OneWay}" Visibility="{Binding ShowIntersection, Converter={StaticResource boolToVis}, Mode=OneWay, Source={StaticResource DevicesViewModel}}" />
+                    <Label Content="Status" />
+                    <TextBox Text="{Binding SelectedDevice.Status, Source={StaticResource DevicesViewModel}}" />
+                </StackPanel>
+            </Grid>
         </Grid>
-        <Grid Grid.Column="1" Margin="0, 10, 10, 10">
+        <Grid Visibility="{Binding ShowingLocations, FallbackValue=Hidden, Converter={StaticResource boolToVis}, Source={StaticResource DevicesViewModel}}">
             <Grid.RowDefinitions>
                 <RowDefinition />
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Margin="0, 0, 0, 10">
-                <Label Content="Device Id" />
-                <TextBox Text="{Binding SelectedDevice.Serial, Source={StaticResource DevicesViewModel}}" />
-                <Label Content="GPS Location" />
-                <Label Content="Latitude" />
-                <TextBox Text="{Binding SelectedDevice.Latitude, Source={StaticResource DevicesViewModel}}" />
-                <Label Content="Longitude" />
-                <TextBox Text="{Binding SelectedDevice.Longitude, Source={StaticResource DevicesViewModel}}" />
-                <Label Content="Received Date" />
-                <TextBox Text="{Binding SelectedDevice.ReceivedDate, Source={StaticResource DevicesViewModel}}" />
-                <Label Content="Deployment Date" />
-                <TextBox Text="{Binding SelectedDevice.DeploymentDate, Source={StaticResource DevicesViewModel}}" />
-                <Label Content="Nearest Intersection" />
-                <TextBox Text="{Binding SelectedDevice.NearestIntersection, Source={StaticResource DevicesViewModel}, Mode=OneWay}" />
-                <Label Content="Status" />
-                <TextBox Text="{Binding SelectedDevice.Status, Source={StaticResource DevicesViewModel}}" />
-            </StackPanel>
+            
+            <TextBox TextWrapping="Wrap" Margin="10" Text="{Binding Locations, Source={StaticResource DevicesViewModel}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" IsReadOnly="True"/>
+            <Button Command="{Binding HideLocationsCommand, Source={StaticResource DevicesViewModel}}" Width="100" HorizontalAlignment="Center" Content="Dismiss" DockPanel.Dock="Bottom" Grid.Row="1" Margin="0, 0, 0, 10"/>
         </Grid>
     </Grid>
 </Window>
