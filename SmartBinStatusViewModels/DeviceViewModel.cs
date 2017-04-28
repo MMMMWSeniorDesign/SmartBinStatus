@@ -32,7 +32,7 @@ namespace SmartBinStatus.ViewModels
             NearestIntersectionFirst  = device.NearestIntersectionFirst;
             NearestIntersectionSecond = device.NearestIntersectionSecond;
             ReceivedDate              = device.ReceivedDate;
-            Reviewed                  = device.Reviewed.Value;
+            Reviewed                  = device.Reviewed;
             Serial                    = device.Serial;
             Status                    = GetDeviceStatus(device);
         }

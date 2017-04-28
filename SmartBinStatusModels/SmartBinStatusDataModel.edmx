@@ -17,7 +17,7 @@
           <Property Name="NearestIntersectionFirst" Type="varchar" MaxLength="50" />
           <Property Name="NearestIntersectionSecond" Type="varchar" MaxLength="50" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
-          <Property Name="Reviewed" Type="bit" />
+          <Property Name="Reviewed" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="DeviceStatuses">
           <Key>
@@ -65,7 +65,7 @@
           <Property Name="NearestIntersectionFirst" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="NearestIntersectionSecond" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <Property Name="Reviewed" Type="Boolean" />
+          <Property Name="Reviewed" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="DeviceStatuses" Relationship="Self.FK_DeviceStatuses_Devices" FromRole="Devices" ToRole="DeviceStatuses" />
         </EntityType>
         <EntityType Name="DeviceStatus">

@@ -15,7 +15,6 @@ namespace SmartBinStatus.ViewModels
         private bool            _alerting, _showDeletedDevices, _showingLocations;
         private DeviceViewModel _selectedDevice;
         private ICommand        _addDevice, _hideLocations, _showLocations, _removeDevice;
-        private int             _fullBinCount;
         private string          _locations, _serialFilter, _statusFilter;                                          
         private Timer           _updateTimer;
 
@@ -26,42 +25,38 @@ namespace SmartBinStatus.ViewModels
 
         public DevicesViewModel()
         {
-            _fullBinCount         = 0;
 
-#if !DEBUG
             _updateTimer          = new Timer(10000);
             _updateTimer.Elapsed += _updateTimer_Elapsed;
             _updateTimer.Start();
-#endif
 
             SerialFilter     = "";
             ShowingLocations = false;
             StatusFilter     = "";
         }
 
-        private async void _updateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private  void _updateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await Update();
+             Update();
         }
 
-        private async Task Update()
+        private void Update()
         {
             OnPropertyChanged("Devices");
 
-            _fullBinCount = 0;
             Locations = "";
 
-            var something = 
-                await Entities.Devices.SelectMany(d => d.DeviceStatuses
+            var unreviewedFullBins = 
+                 Entities.Devices.SelectMany(d => d.DeviceStatuses
                               .Where(s => s.Device.Reviewed == false && 
                                           s.Status == (short)DeviceViewModel.DeviceStatusCodes.Full))
-                              .ToListAsync();
+                              .ToList();
 
-            if (something.Count > 0)
+            if (unreviewedFullBins.Count > 0)
             {
                 Alerting = true;
-                something.Select(d => d.Device.Latitude + ", " + d.Device.Longitude).ToList()
-                         .ForEach(d => Locations += d);
+                unreviewedFullBins.Select(d => d.Device.Latitude + ", " + d.Device.Longitude).ToList()
+                                  .ForEach(d => Locations += d);
             }
             else
                 Alerting = false;
@@ -90,7 +85,7 @@ namespace SmartBinStatus.ViewModels
         private List<DeviceViewModel> GetVMCollection()
         {
             _entities = null;
-            
+
             if (!string.IsNullOrWhiteSpace(SerialFilter) && string.IsNullOrWhiteSpace(StatusFilter))
                 return Entities.Devices.ToList()
                                .Where(d => d.Serial.Contains(SerialFilter))
@@ -111,7 +106,7 @@ namespace SmartBinStatus.ViewModels
                                                             .Single().Status).ToString() == StatusFilter)
                                .Select(d => new DeviceViewModel(d)).ToList();
             else
-                return Entities.Devices.AsParallel().ToList().Select(d => new DeviceViewModel(d)).AsParallel().ToList();
+                return Entities.Devices.AsParallel().ToList().Select(d => new DeviceViewModel(d)).ToList();
         }
 
         private SmartBinDeploymentEntities Entities
@@ -129,7 +124,7 @@ namespace SmartBinStatus.ViewModels
         {
             Device d = new Device()
             {
-                DeviceStatuses = new System.Collections.Generic.List<DeviceStatus>(),
+                DeviceStatuses = new List<DeviceStatus>(),
                 IsDeleted      = false,
                 Serial         = new Serial().ToString(),
                 ReceivedDate   = DateTime.UtcNow

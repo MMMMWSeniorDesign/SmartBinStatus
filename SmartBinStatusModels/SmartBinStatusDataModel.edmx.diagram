@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7bca8ee904f94871813e8cc397f237f7" Name="Diagram1">
+      <Diagram DiagramId="e81249e3e39845ae8009ef48439ed3be" Name="Diagram1">
         <EntityTypeShape EntityType="SmartBinDeploymentModel.Device" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="SmartBinDeploymentModel.DeviceStatus" Width="1.5" PointX="3" PointY="1.5" IsExpanded="true" />
         <AssociationConnector Association="SmartBinDeploymentModel.FK_DeviceStatuses_Devices" ManuallyRouted="false" />
